@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div id="board"></div>
+
+        <script>
+            //melange les box aléatoirement
+            function shuffleChildren(parent){
+                let children = parent.children
+                let i = children.length, k , temp
+                while(--i > 0) {//on bovule tant que 1 oté de i est toujours positif
+                    // k stocke un bbr aléatoir basée sur i
+                    k = Math.floor(Math.random()*(i+1))
+                    // temp pointe temporairement l'élément à la position i
+                    temp = children[k]
+                    // remplace l'élément à la position i
+                    children[k] = children[i]
+                    // place l'élément k pointé temporiarement à la fin du contenue board
+                    board.appendChild(temp)
+                }                
+            }
+
+            //change la coumeur des box
+            function showReaction(type,clickedBox){
+                // ajoute a l'argument clickedBox une class css type
+                clickedBox.classList.add(type)
+                // si la class  est different de succes alors
+                if(type!== "success"){
+                    // retire a l'arguemnt box sa class
+                    setTimeout(function(){
+                        clickedBox.classList.remove(type)
+                    },800)
+                }
+            }
+            
+            const box = document.createElement("div")
+            box.classList.add("box")
+
+            const board = document.querySelector("#board")
+
+            let nb =1
+            //crée des box
+            for(let i = 1; i <= 10; i++){
+                //création d'un element boite
+                let newbox = box.cloneNode()
+                //ajoute la valeur i au text
+                newbox.innerText = i
+                //ajoute en tant qu'enfant de board
+                board.appendChild(newbox)
+
+                //ajoute un evenement click assoié a une fonction 
+                newbox.addEventListener("click",function(){
+                    //si nb est egal a la valeur max de la boite alor
+                    if(i == nb){
+                        //ajoute la class box cliked
+                        newbox.classList.add("box-clicked")
+                        //si nb vaut le numero auctel de la boite  alor
+                        if(nb == board.children.length){
+                            // selectionne toute les boite et pour chaque boite
+                            board.querySelectorAll(".box").forEach(function(box){
+                                // execute la fonction showReaction toute les boite seront verte
+                                showReaction("success",box)
+                            })
+                        }
+                        nb++
+                    }
+                    //si la boite cliqué n'est pas la suite de l'ancienne boite alors l'affiche en rouge 
+                    else if(i>nb){
+                        // execute la fonction showReaction la boite est rouge
+                        showReaction("error",newbox)
+                        // revient a 1
+                        nb=1
+                        // selectionne toute les boite et pour chaque boite
+                        board.querySelectorAll(".box-clicked").forEach(function(validBox){
+                            // retire a chaque boite la class box cliked
+                            validBox.classList.remove("box-clicked")
+                        })
+                    }
+                    //si une boite deja cliqué et cliqué alors l'affiche en bleu 
+                    else {
+                        // execute la fonction showReaction la boite est bleu
+                        showReaction("notice",newbox)
+                    }
+                    
+                })
+            }
+            
+
+            shuffleChildren(board)
+        </script>
+    </body>
+
+</html>
